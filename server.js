@@ -6,8 +6,8 @@ let app = express();
 const PORT = process.env.PORT || 3000;
 
 // check to see if call is http, if not redirect
-app.use(function (req, res, next) {
-  if (req.headers['x-forwarded-proto' === 'http']) {
+app.use(function (req, res, next){
+  if (req.headers['x-forwarded-proto'] === 'http') {
     next();
   } else {
     res.redirect('http://' + req.hostname + req.url);
