@@ -6,20 +6,26 @@ const OPEN_WEATHER_MAP_URL = 'http://api.openweathermap.org/data/2.5/weather?app
 
 module.exports = {
   getTemp: function (location) {
-    var encodedLocation = encodeURIComponent(location);
-    var requestUrl = `${OPEN_WEATHER_MAP_URL}&q=${encodedLocation}`;
+    let encodedLocation, requestUrl, zip;
+
+    if ( /^\d{5}$/.test(location) ) {
+      zip = location;
+      requestUrl = `${OPEN_WEATHER_MAP_URL}&zip=${location}`;
+    } else {
+      encodedLocation = encodeURIComponent(location);
+      requestUrl = `${OPEN_WEATHER_MAP_URL}&q=${encodedLocation}`;
+    }
 
     return axios.get(requestUrl).then(function (res) {
       if (res.data.cod && res.data.message) {
         throw new Error(res.data.message);
       } else {
-        if (res.data.name.toLowerCase() !== location.toLowerCase()) {
+        if (zip == undefined && res.data.name.toLowerCase() !== location.toLowerCase()) {
           throw new Error("Invalid city name")
         } else {
           return {
             temp: res.data.main.temp,
             city: res.data.name,
-
           };
         }
       }
